@@ -7,9 +7,8 @@ const SaleSchema = new mongoose.Schema(
       ref: "users",
       required: true,
     },
-    ProductID: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "product",
+    productName: {
+      type: String, 
       required: true,
     },
     StoreID: {

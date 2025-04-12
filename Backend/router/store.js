@@ -1,11 +1,15 @@
 const express = require("express");
-const app = express();
+const router = express.Router();
 const store = require("../controller/store");
 
-// Add Store 
-app.post("/add", store.addStore);
+router.post("/add", store.addStore);
+router.get("/get/:userID", store.getAllStores);
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    await store.deleteStore(req, res);
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting store" });
+  }
+});
 
-// Get All Store
-app.get("/get/:userID", store.getAllStores)
-
-module.exports = app;
+module.exports = router;

@@ -13,7 +13,6 @@ function Sales() {
 
   useEffect(() => {
     fetchSalesData();
-    fetchProductsData();
     fetchStoresData();
   }, [updatePage]);
 
@@ -28,14 +27,7 @@ function Sales() {
   };
 
   // Fetching Data of All Products
-  const fetchProductsData = () => {
-    fetch(`http://localhost:4000/api/product/get/${authContext.user}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setAllProducts(data);
-      })
-      .catch((err) => console.log(err));
-  };
+
 
   // Fetching Data of All Stores
   const fetchStoresData = () => {
@@ -108,9 +100,9 @@ function Sales() {
             <tbody className="divide-y divide-gray-200">
               {sales.map((element, index) => {
                 return (
-                  <tr key={element._id}>
+                  <tr>
                     <td className="whitespace-nowrap px-4 py-2  text-gray-900">
-                      {element.ProductID?.name}
+                      {element.productName}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                       {element.StoreID?.name}
@@ -122,7 +114,7 @@ function Sales() {
                       {element.SaleDate}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      ${element.TotalSaleAmount}
+                      Rs.{element.TotalSaleAmount}
                     </td>
                   </tr>
                 );
