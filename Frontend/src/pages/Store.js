@@ -12,7 +12,7 @@ function Store() {
   }, []);
 
   const fetchData = () => {
-    fetch(`http://localhost:4000/api/store/get/${authContext.user}`)
+    fetch(`https://inventory-management-5d02.onrender.com/api/store/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllStores(data);

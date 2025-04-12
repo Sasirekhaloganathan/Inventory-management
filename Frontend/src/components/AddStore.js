@@ -23,7 +23,7 @@ export default function AddStore({ onClose, onStoreAdded }) {
   const addProduct = () => {
 
 
-    fetch("http://localhost:4000/api/store/add", {
+    fetch("https://inventory-management-5d02.onrender.com/api/store/add", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
