@@ -6,13 +6,14 @@ export default function AddSale({
   addSaleModalSetting,
   stores,
   handlePageUpdate,
-  authContext
+  authContext,
 }) {
   const [sale, setSale] = useState({
     userID: authContext.user,
-    productName: "", // changed from productID
+    productName: "",
     storeID: "",
     stockSold: "",
+    costPerUnit: "",
     saleDate: "",
     totalSaleAmount: "",
   });
@@ -21,7 +22,19 @@ export default function AddSale({
   const cancelButtonRef = useRef(null);
 
   const handleInputChange = (key, value) => {
-    setSale({ ...sale, [key]: value });
+    const updatedSale = { ...sale, [key]: value };
+
+    if (key === "stockSold" || key === "costPerUnit") {
+      const stock = parseFloat(updatedSale.stockSold);
+      const cost = parseFloat(updatedSale.costPerUnit);
+      if (!isNaN(stock) && !isNaN(cost)) {
+        updatedSale.totalSaleAmount = (stock * cost).toFixed(2);
+      } else {
+        updatedSale.totalSaleAmount = "";
+      }
+    }
+
+    setSale(updatedSale);
   };
 
   const addSale = () => {
@@ -61,7 +74,7 @@ export default function AddSale({
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0 ">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -80,10 +93,10 @@ export default function AddSale({
                         aria-hidden="true"
                       />
                     </div>
-                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left ">
+                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                       <Dialog.Title
                         as="h3"
-                        className="text-lg  py-4 font-semibold leading-6 text-gray-900 "
+                        className="text-lg py-4 font-semibold leading-6 text-gray-900"
                       >
                         Add Sale
                       </Dialog.Title>
@@ -92,7 +105,7 @@ export default function AddSale({
                           <div>
                             <label
                               htmlFor="productName"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                              className="block mb-2 text-sm font-medium text-gray-900"
                             >
                               Product Name
                             </label>
@@ -104,14 +117,14 @@ export default function AddSale({
                               onChange={(e) =>
                                 handleInputChange(e.target.name, e.target.value)
                               }
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
                             />
                           </div>
 
                           <div>
                             <label
                               htmlFor="stockSold"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                              className="block mb-2 text-sm font-medium text-gray-900"
                             >
                               Stock to be sold
                             </label>
@@ -123,15 +136,53 @@ export default function AddSale({
                               onChange={(e) =>
                                 handleInputChange(e.target.name, e.target.value)
                               }
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                               placeholder="Number of pieces"
                             />
                           </div>
 
                           <div>
                             <label
+                              htmlFor="costPerUnit"
+                              className="block mb-2 text-sm font-medium text-gray-900"
+                            >
+                              Cost Per Unit
+                            </label>
+                            <input
+                              type="number"
+                              name="costPerUnit"
+                              id="costPerUnit"
+                              value={sale.costPerUnit}
+                              onChange={(e) =>
+                                handleInputChange(e.target.name, e.target.value)
+                              }
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                              placeholder="Rs. 100"
+                            />
+                          </div>
+
+                          <div>
+                            <label
+                              htmlFor="totalSaleAmount"
+                              className="block mb-2 text-sm font-medium text-gray-900"
+                            >
+                              Total Sale Amount
+                            </label>
+                            <input
+                              type="number"
+                              name="totalSaleAmount"
+                              id="totalSaleAmount"
+                              value={sale.totalSaleAmount}
+                              readOnly
+                              className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 cursor-not-allowed"
+                              placeholder="Auto-calculated"
+                            />
+                          </div>
+
+                          <div>
+                            <label
                               htmlFor="storeID"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                              className="block mb-2 text-sm font-medium text-gray-900"
                             >
                               Store Name
                             </label>
@@ -141,7 +192,7 @@ export default function AddSale({
                               onChange={(e) =>
                                 handleInputChange(e.target.name, e.target.value)
                               }
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
                             >
                               <option value="">Select Store</option>
                               {stores.map((element) => (
@@ -154,28 +205,8 @@ export default function AddSale({
 
                           <div>
                             <label
-                              htmlFor="totalSaleAmount"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
-                              Total Sale Amount
-                            </label>
-                            <input
-                              type="number"
-                              name="totalSaleAmount"
-                              id="totalSaleAmount"
-                              value={sale.totalSaleAmount}
-                              onChange={(e) =>
-                                handleInputChange(e.target.name, e.target.value)
-                              }
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                              placeholder="Rs.299"
-                            />
-                          </div>
-
-                          <div>
-                            <label
                               htmlFor="saleDate"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                              className="block mb-2 text-sm font-medium text-gray-900"
                             >
                               Sales Date
                             </label>
@@ -187,7 +218,7 @@ export default function AddSale({
                               onChange={(e) =>
                                 handleInputChange(e.target.name, e.target.value)
                               }
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             />
                           </div>
                         </div>
